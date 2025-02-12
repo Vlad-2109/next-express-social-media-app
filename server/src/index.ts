@@ -1,7 +1,12 @@
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { app } from './app';
-import { error } from 'console';
+
+process.on('uncaughtException', (err: Error) => {
+  console.error('UNCAUGHT EXCEPTION: Shutting down');
+  console.log(err.name, err.message);
+  process.exit(1);
+});
 
 dotenv.config();
 
@@ -17,4 +22,12 @@ mongoose
 
 const server = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+});
+
+process.on('unhandledRejection', (err: Error) => {
+  console.log('UNHANDLE REJECTION! Shutting down');
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
 });
