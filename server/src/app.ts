@@ -6,6 +6,8 @@ import cookieParser from 'cookie-parser';
 import mongoSanitize from 'express-mongo-sanitize';
 import path from 'path';
 import dotenv from 'dotenv';
+import AppError from './utils/appError';
+import globalErrorHandler from './controllers/errorController';
 
 dotenv.config();
 
@@ -31,3 +33,13 @@ if (process.env.NODE_ENV === 'development') {
 app.use(express.json({ limit: '10kb' }));
 
 app.use(mongoSanitize());
+
+// Routes for users
+
+// Routes for posts
+
+app.all('*', (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
+
+app.use(globalErrorHandler)
