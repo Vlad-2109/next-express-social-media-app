@@ -1,11 +1,12 @@
 import mongoose, { Document } from 'mongoose';
 import validator from 'validator';
+import bcrypt from 'bcryptjs';
 
 interface IUser extends Document {
   username: string;
   email: string;
   password: string;
-  passwordConfirm: string;
+  passwordConfirm: string | undefined;
   profilePicture?: string;
   bio: string;
   following: mongoose.Types.ObjectId;
@@ -92,10 +93,17 @@ const userSchema = new mongoose.Schema<IUser>(
     resetPasswordOTPExpires: {
       type: Date,
       default: null,
-    }
+    },
   },
   { timestamps: true },
 );
+
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 12);
+  this.passwordConfirm = undefined;
+  next();
+});
 
 const User = mongoose.model('User', userSchema);
 
