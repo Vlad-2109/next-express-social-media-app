@@ -8,6 +8,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 import AppError from './utils/appError';
 import globalErrorHandler from './controllers/errorController';
+import userRouter from './routes/userRoutes';
 
 dotenv.config();
 
@@ -35,6 +36,7 @@ app.use(express.json({ limit: '10kb' }));
 app.use(mongoSanitize());
 
 // Routes for users
+app.use('/api/v1/users', userRouter);
 
 // Routes for posts
 
@@ -42,4 +44,4 @@ app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
-app.use(globalErrorHandler)
+app.use(globalErrorHandler);
