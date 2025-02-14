@@ -9,7 +9,7 @@ type EmailOptions = {
   html: string;
 };
 
-export const sendEmail = async (options: EmailOptions) => {
+const sendEmail = async (options: EmailOptions) => {
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
@@ -27,3 +27,5 @@ export const sendEmail = async (options: EmailOptions) => {
 
   await transporter.sendMail(mailOptions);
 };
+
+export default sendEmail;
