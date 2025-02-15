@@ -50,7 +50,7 @@ const signup = asyncHandler(async (req, res, next) => {
     return next(new AppError('Email already registerd', 400));
   }
   const otp = generateOtp();
-  const otpExpires = Date.now() + 24 * 60 * 60 * 100;
+  const otpExpires = Date.now() + 24 * 60 * 60 * 1000;
   const newUser = await User.create({
     username,
     email,
@@ -105,4 +105,52 @@ const verifyAccount = asyncHandler(async (req: any, res, next) => {
   createSendToken(user, 200, res, 'Email has been verified');
 })
 
-export { signup, verifyAccount };
+const resendOtp = asyncHandler(async (req: any, res, next) => {
+  const { email } = req.user;
+  if (!email) {
+    return next(new AppError('Email is required', 400));
+  }
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(new AppError('User not found', 404));
+  }
+
+  if (user.isVerified) {
+    return next(new AppError('This account is already verified', 400));
+  }
+
+  const otp = generateOtp();
+  const otpExpires = Date.now() + 24 * 60 * 60 * 1000;
+
+  user.otp = otp;
+  user.otpExpires = otpExpires;
+
+  await user.save({ validateBeforeSave: false });
+
+  const htmlTemplate = loadTemplate('otpTemplate.hbs', {
+    title: 'Otp Verification',
+    username: user.username,
+    otp,
+    message: 'Your one-time password (OTP) for account verification is'
+  });
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: 'Resend otp for email verification',
+      html: htmlTemplate
+    })
+
+    res.status(200).json({status: 'success', message: 'A new Otp is send to your email'})
+  } catch (error) {
+    user.otp = undefined;
+    user.otpExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    return next(new AppError('There is an error sending email. Try again later!', 500))
+  }
+
+})
+
+export { signup, verifyAccount, resendOtp };

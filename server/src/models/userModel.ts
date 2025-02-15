@@ -13,8 +13,8 @@ export interface IUser extends Document {
   posts: mongoose.Types.ObjectId;
   savedPosts: mongoose.Types.ObjectId;
   isVerified: boolean;
-  otp: string | null;
-  otpExpires: Date | null;
+  otp: string | null | undefined;
+  otpExpires: Date | number | null | undefined;
   resetPasswordOTP: string | null;
   resetPasswordOTPExpires: Date | null;
   timestamps: boolean;
