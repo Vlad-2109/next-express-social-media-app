@@ -64,7 +64,7 @@ const signup = asyncHandler(async (req, res, next) => {
     title: 'Otp Verification',
     username: newUser.username,
     otp,
-    message: 'Your one-time password (OTP) for account verification is : '
+    message: 'Your one-time password (OTP) for account verification is'
   });
 
   try {
