@@ -15,8 +15,8 @@ export interface IUser extends Document {
   isVerified: boolean;
   otp: string | null | undefined;
   otpExpires: Date | number | null | undefined;
-  resetPasswordOTP: string | null;
-  resetPasswordOTPExpires: Date | null;
+  resetPasswordOTP: string | null | undefined;
+  resetPasswordOTPExpires: Date | number | null | undefined;
   timestamps: boolean;
   correctPassword(userPassword: string, databasePassword: string): Promise<boolean>;
 }
