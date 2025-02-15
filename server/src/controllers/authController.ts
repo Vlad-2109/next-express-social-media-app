@@ -81,4 +81,28 @@ const signup = asyncHandler(async (req, res, next) => {
   }
 });
 
-export { signup };
+const verifyAccount = asyncHandler(async (req: any, res, next) => {
+  const { otp } = req.body;
+  if (!otp) {
+    return next(new AppError('Otp is required for verification', 400));
+  }
+
+  const user = req.user;
+  if (user.otp !== otp) {
+    return next(new AppError('Invalid otp', 400));
+  }
+
+  if (Date.now() > user.otpExpires) {
+    return next(new AppError('Otp has expired. Please request a new OTP', 400))
+  }
+
+  user.isVerified = true;
+  user.otp = undefined;
+  user.otpExpires = undefined;
+
+  await user.save({ validateBeforeSave: false });
+
+  createSendToken(user, 200, res, 'Email has been verified');
+})
+
+export { signup, verifyAccount };
