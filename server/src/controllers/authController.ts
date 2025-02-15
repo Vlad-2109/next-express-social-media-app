@@ -218,4 +218,25 @@ const forgetPassword = asyncHandler(async (req, res, next) => {
   }
 })
 
-export { signup, verifyAccount, resendOtp, login, logout, forgetPassword };
+const resetPassword = asyncHandler(async (req, res, next) => {
+  const { email, otp, password, passwordConfirm } = req.body;
+  const user = await User.findOne({
+    email,
+    resetPasswordOTP: otp,
+    resetPasswordOTPExpires: { $gt: Date.now() }
+  });
+
+  if (!user) {
+    return next(new AppError('No User Found', 400));
+  }
+
+  user.password = password;
+  user.passwordConfirm = passwordConfirm;
+  user.resetPasswordOTP = undefined;
+  user.resetPasswordOTPExpires = undefined;
+
+  await user.save();
+  createSendToken(user, 200, res, 'Password Reset Successfully')
+})
+
+export { signup, verifyAccount, resendOtp, login, logout, forgetPassword, resetPassword };
