@@ -18,6 +18,7 @@ export interface IUser extends Document {
   resetPasswordOTP: string | null;
   resetPasswordOTPExpires: Date | null;
   timestamps: boolean;
+  correctPassword(userPassword: string, databasePassword: string): Promise<boolean>;
 }
 
 const userSchema = new mongoose.Schema<IUser>(
@@ -104,6 +105,10 @@ userSchema.pre('save', async function (next) {
   this.passwordConfirm = undefined;
   next();
 });
+
+userSchema.methods.correctPassword = async function (userPassword: string, databasePassword: string) {
+  return await bcrypt.compare(userPassword, databasePassword);
+}
 
 const User = mongoose.model('User', userSchema);
 
