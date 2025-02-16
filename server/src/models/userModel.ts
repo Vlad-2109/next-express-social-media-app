@@ -11,15 +11,18 @@ export interface IUser extends Document {
   bio: string;
   following: [mongoose.Types.ObjectId];
   followers: [mongoose.Types.ObjectId];
-  posts: mongoose.Types.ObjectId;
-  savedPosts: mongoose.Types.ObjectId;
+  posts: [mongoose.Types.ObjectId];
+  savedPosts: [mongoose.Types.ObjectId];
   isVerified: boolean;
   otp: string | null | undefined;
   otpExpires: Date | number | null | undefined;
   resetPasswordOTP: string | null | undefined;
   resetPasswordOTPExpires: Date | number | null | undefined;
   timestamps: boolean;
-  correctPassword(userPassword: string, databasePassword: string): Promise<boolean>;
+  correctPassword(
+    userPassword: string,
+    databasePassword: string,
+  ): Promise<boolean>;
 }
 
 const userSchema = new mongoose.Schema<IUser>(
@@ -64,22 +67,30 @@ const userSchema = new mongoose.Schema<IUser>(
       maxlength: 150,
       default: '',
     },
-    following: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: 'User',
-    },
-    followers: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: 'User',
-    },
-    posts: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Post',
-    },
-    savedPosts: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Post',
-    },
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    posts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Post',
+      },
+    ],
+    savedPosts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Post',
+      },
+    ],
     isVerified: {
       type: Boolean,
       default: false,
@@ -111,9 +122,12 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-userSchema.methods.correctPassword = async function (userPassword: string, databasePassword: string) {
+userSchema.methods.correctPassword = async function (
+  userPassword: string,
+  databasePassword: string,
+) {
   return await bcrypt.compare(userPassword, databasePassword);
-}
+};
 
 const User = mongoose.model('User', userSchema);
 
