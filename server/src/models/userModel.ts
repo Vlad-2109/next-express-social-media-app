@@ -9,7 +9,8 @@ export interface IUser extends Document {
   passwordConfirm: string | undefined;
   profilePicture?: string;
   bio: string;
-  following: mongoose.Types.ObjectId;
+  following: [mongoose.Types.ObjectId];
+  followers: [mongoose.Types.ObjectId];
   posts: mongoose.Types.ObjectId;
   savedPosts: mongoose.Types.ObjectId;
   isVerified: boolean;
@@ -64,7 +65,11 @@ const userSchema = new mongoose.Schema<IUser>(
       default: '',
     },
     following: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: 'User',
+    },
+    followers: {
+      type: [mongoose.Schema.Types.ObjectId],
       ref: 'User',
     },
     posts: {
