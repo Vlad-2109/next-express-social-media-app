@@ -1,8 +1,8 @@
 import User from '../models/userModel';
 import AppError from '../utils/appError';
 import asyncHandler from '../utils/catchAsync';
-import { uploadToCloudinary } from '../utils/cloudinary';
 import getDataUri from '../utils/dataUri';
+import { uploadToCloudinary } from '../utils/cloudinary';
 
 const getProfile = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
@@ -54,4 +54,14 @@ const editProfile = asyncHandler(async (req: any, res, next) => {
     .json({ status: 'success', message: 'Profile Updated', data: { user } });
 });
 
-export { getProfile, editProfile };
+const suggestedUser = asyncHandler(async (req: any, res, next) => {
+  const loginUserId = req.user.id;
+
+  const users = await User.find({ _id: { $ne: loginUserId } }).select(
+    '-password -otp -otpExpires -resetPasswordOTP -resetPasswordOTPExpires -passwordConfirm',
+  );
+
+  res.status(200).json({ status: 'success', data: { users } });
+});
+
+export { getProfile, editProfile, suggestedUser };

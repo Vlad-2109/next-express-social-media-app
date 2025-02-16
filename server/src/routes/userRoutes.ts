@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { changePassword, forgetPassword, login, logout, resendOtp, resetPassword, signup, verifyAccount } from '../controllers/authController';
-import { editProfile, getProfile } from '../controllers/userController';
+import { editProfile, getProfile, suggestedUser } from '../controllers/userController';
 import isAuthenticated from '../middleware/isAuthenticated';
 import upload from '../middleware/multer';
 
@@ -18,6 +18,7 @@ router.post('/change-password', isAuthenticated, changePassword);
 
 // User routes
 router.get('/profile/:id', getProfile)
+router.get('/suggested-user', isAuthenticated, suggestedUser);
 router.post('/edit-profile', isAuthenticated, upload.single('profilePicture'), editProfile)
 
 export default router;
