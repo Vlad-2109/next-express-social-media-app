@@ -239,4 +239,29 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   createSendToken(user, 200, res, 'Password Reset Successfully')
 })
 
-export { signup, verifyAccount, resendOtp, login, logout, forgetPassword, resetPassword };
+const changePassword = asyncHandler(async (req: any, res, next) => {
+  const { currentPassword, newPassword, newPasswordConfirm } = req.body;
+  const { email } = req.user;
+
+  const user = await User.findOne({ email }).select('+password');
+  if (!user) {
+    return next(new AppError('User not found', 404));
+  }
+
+  if (!(await user.correctPassword(currentPassword, user.password))) {
+    return next(new AppError('Incorrect Current Password', 400));
+  }
+
+  if (newPassword !== newPasswordConfirm) {
+    return next(new AppError('New password and confirm password are not same', 400));
+  }
+
+  user.password = newPassword;
+  user.passwordConfirm = newPasswordConfirm;
+
+  await user.save();
+
+  createSendToken(user, 200, res, 'Password Changed successfully');
+})
+
+export { signup, verifyAccount, resendOtp, login, logout, forgetPassword, resetPassword, changePassword };
