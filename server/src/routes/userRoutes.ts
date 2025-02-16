@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { changePassword, forgetPassword, login, logout, resendOtp, resetPassword, signup, verifyAccount } from '../controllers/authController';
-import { editProfile, followUnffolow, getProfile, suggestedUser } from '../controllers/userController';
+import { editProfile, followUnffolow, getMe, getProfile, suggestedUser } from '../controllers/userController';
 import isAuthenticated from '../middleware/isAuthenticated';
 import upload from '../middleware/multer';
 
@@ -17,9 +17,10 @@ router.post('/reset-password', resetPassword);
 router.post('/change-password', isAuthenticated, changePassword);
 
 // User routes
-router.get('/profile/:id', getProfile)
+router.get('/profile/:id', getProfile);
+router.get('/me', isAuthenticated, getMe);
 router.get('/suggested-user', isAuthenticated, suggestedUser);
-router.post('/edit-profile', isAuthenticated, upload.single('profilePicture'), editProfile)
+router.post('/edit-profile', isAuthenticated, upload.single('profilePicture'), editProfile);
 router.post('/follow-unfollow/:id', isAuthenticated, followUnffolow);
 
 export default router;

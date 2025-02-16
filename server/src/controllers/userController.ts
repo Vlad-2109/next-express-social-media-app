@@ -114,4 +114,13 @@ const followUnffolow = asyncHandler(async (req: any, res, next) => {
   });
 });
 
-export { getProfile, editProfile, suggestedUser, followUnffolow };
+const getMe = asyncHandler(async (req: any, res, next) => {
+    const user = req.user;
+    if (!user) {
+        return next(new AppError('User not Authenticated', 404));
+    }
+
+    res.status(200).json({status: 'success', message: 'Authenticated User', data: {user}})
+})
+
+export { getProfile, editProfile, suggestedUser, followUnffolow, getMe };
