@@ -1,6 +1,4 @@
-import { kMaxLength } from 'buffer';
 import mongoose from 'mongoose';
-import { isPort } from 'validator';
 
 export interface IPost extends Document {
   caption: string;
