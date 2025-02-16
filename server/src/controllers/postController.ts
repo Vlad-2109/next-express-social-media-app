@@ -8,7 +8,7 @@ import User from '../models/userModel';
 const createPost = asyncHandler(async (req: any, res, next) => {
   const { caption } = req.body;
   const image = req.file;
-  const userId = req.user._id;
+  const userId = req.user.id;
 
   if (!image) {
     return next(new AppError('Image is required for the post', 400));
