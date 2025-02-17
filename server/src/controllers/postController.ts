@@ -54,4 +54,20 @@ const createPost = asyncHandler(async (req: any, res, next) => {
     .json({ status: 'success', message: 'Post Created', data: { post } });
 });
 
-export { createPost };
+const getAllPosts = asyncHandler(async (req, res, next) => {
+  const posts = await Post.find().populate({
+    path: 'user',
+    select: 'username profilePicture bio'
+  }).populate({
+    path: 'comments',
+    select: 'text user',
+    populate: {
+      path: 'user',
+      select: 'username profilePicture'
+    }
+  }).sort({createdAt: -1})
+
+  return res.status(200).json({ status: 'success', results: posts.length, data: { posts } });
+})
+
+export { createPost, getAllPosts };

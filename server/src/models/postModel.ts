@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
 export interface IPost extends Document {
   caption: string;
@@ -8,6 +8,7 @@ export interface IPost extends Document {
   };
   user: mongoose.Types.ObjectId;
   likes: [mongoose.Types.ObjectId];
+  comments: [mongoose.Types.ObjectId];
   timestamps: boolean;
 }
 
@@ -31,6 +32,12 @@ const postSchema = new mongoose.Schema<IPost>(
       required: [true, 'User ID is required'],
     },
     likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comment',
+      },
+    ],
+    comments: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment',
