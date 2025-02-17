@@ -10,6 +10,7 @@ import AppError from './utils/appError';
 import globalErrorHandler from './controllers/errorController';
 import userRouter from './routes/userRoutes';
 import postRouter from './routes/postRoutes';
+import commentRouter from './routes/commentRoutes';
 
 dotenv.config();
 
@@ -41,6 +42,9 @@ app.use('/api/v1/users', userRouter);
 
 // Routes for posts
 app.use('/api/v1/posts', postRouter);
+
+// Routes for comments
+app.use('/api/v1/comments', commentRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
