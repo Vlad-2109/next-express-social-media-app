@@ -1,9 +1,10 @@
 import sharp from 'sharp';
 import AppError from '../utils/appError';
 import asyncHandler from '../utils/catchAsync';
-import { uploadToCloudinary } from '../utils/cloudinary';
+import { cloudinary, uploadToCloudinary } from '../utils/cloudinary';
 import Post from '../models/postModel';
 import User from '../models/userModel';
+import Comment from '../models/commentModel';
 
 const createPost = asyncHandler(async (req: any, res, next) => {
   const { caption } = req.body;
@@ -113,4 +114,37 @@ const saveOrUnsavePost = asyncHandler(async (req: any, res, next) => {
   }
 });
 
-export { createPost, getAllPosts, getUserPosts, saveOrUnsavePost };
+const deletePost = asyncHandler(async (req: any, res, next) => {
+  const postId = req.params.postId;
+  const userId = req.user.id;
+
+  const post = await Post.findById(postId).populate('user');
+  if (!post) {
+    return next(new AppError('Post not found', 404));
+  }
+
+  if (post.user._id.toString() !== userId.toString()) {
+    return next(new AppError('You are not authorized to delete this post', 403));
+  }
+
+  // remove the post from user posts
+  await User.updateOne({ _id: userId }, { $pull: { posts: postId } });
+
+  // delete this post from users save list
+  await User.updateMany({ savedPosts: postId }, { $pull: { savedPosts: postId } });
+
+  // remove the comments of this post
+  await Comment.deleteMany({ post: postId });
+  
+  // remove image from cloudinary
+  if (post.image.publicId) {
+    await cloudinary.uploader.destroy(post.image.publicId);
+  }
+
+  // remove the post
+  await Post.findByIdAndDelete(postId);
+
+  return res.status(200).json({ status: 'success', message: 'Post deleted successfully' });
+})
+
+export { createPost, getAllPosts, getUserPosts, saveOrUnsavePost, deletePost };
