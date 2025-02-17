@@ -85,4 +85,32 @@ const getUserPosts = asyncHandler(async (req, res, next) => {
   return res.status(200).json({ status: 'success', results: posts.length, data: { posts } });
 })
 
-export { createPost, getAllPosts, getUserPosts };
+const saveOrUnsavePost = asyncHandler(async (req: any, res, next) => {
+  const userId = req.user.id;
+  const postId = req.params.postId;
+
+  const user = await User.findById(userId);
+  if (!user) {
+    return next(new AppError('User not found', 404));
+  }
+
+  const isPostSaved = user.savedPosts.includes(postId);
+
+  if (isPostSaved) {
+    const user = await User.updateOne(
+      { _id: userId },
+      { $pull: { savedPosts: postId } },
+    );
+
+    return res.status(200).json({ status: 'success', message: 'Post unsaved successfully', data: { user } });
+  } else {
+    const user = await User.updateOne(
+      { _id: userId },
+      { $addToSet: { savedPosts: postId } },
+    );
+
+    return res.status(200).json({ status: 'success', message: 'Post saved successfullly', data: { user } });
+  }
+});
+
+export { createPost, getAllPosts, getUserPosts, saveOrUnsavePost };
