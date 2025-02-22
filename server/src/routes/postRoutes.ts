@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createPost, deletePost, getAllPosts, getUserPosts, saveOrUnsavePost } from '../controllers/postController';
+import { createPost, deletePost, getAllPosts, getUserPosts, likeOrDislikePost, saveOrUnsavePost } from '../controllers/postController';
 import isAuthenticated from '../middleware/isAuthenticated';
 import upload from '../middleware/multer';
 
@@ -10,5 +10,6 @@ router.get('/user-post/:id', getUserPosts);
 router.post('/create-post', isAuthenticated, upload.single('image'), createPost);
 router.post('/save-unsave-post/:postId', isAuthenticated, saveOrUnsavePost);
 router.post('/delete-post/:postId', isAuthenticated, deletePost);
+router.post('/like-dislike/:postId', isAuthenticated, likeOrDislikePost);
 
 export default router;

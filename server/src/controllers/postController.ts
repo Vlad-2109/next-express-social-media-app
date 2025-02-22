@@ -147,4 +147,27 @@ const deletePost = asyncHandler(async (req: any, res, next) => {
   return res.status(200).json({ status: 'success', message: 'Post deleted successfully' });
 })
 
-export { createPost, getAllPosts, getUserPosts, saveOrUnsavePost, deletePost };
+const likeOrDislikePost = asyncHandler(async (req: any, res, next) => {
+  const { postId } = req.params;
+  const userId = req.user.id;
+
+  const post = await Post.findById(postId);
+  if (!post) {
+    return next(new AppError('Post not found', 404));
+  }
+
+  const isLiked = post.likes.includes(userId);
+
+  if (isLiked) {
+    await Post.findByIdAndUpdate(postId, { $pull: { likes: userId } }, { new: true });
+
+    return res.status(200).json({ status: 'success', message: 'Post disliked successfully' });
+  } else {
+    await Post.findByIdAndUpdate(postId, { $addToSet: { LIKES: userId } }, { new: true });
+
+    return res.status(200).json({ status: 'success', message: 'Post liked successfully' });
+  }
+
+})
+
+export { createPost, getAllPosts, getUserPosts, saveOrUnsavePost, deletePost, likeOrDislikePost };

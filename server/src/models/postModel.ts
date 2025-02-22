@@ -34,7 +34,7 @@ const postSchema = new mongoose.Schema<IPost>(
     likes: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Comment',
+        ref: 'User',
       },
     ],
     comments: [
