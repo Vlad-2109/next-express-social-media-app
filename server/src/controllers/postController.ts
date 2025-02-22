@@ -163,7 +163,7 @@ const likeOrDislikePost = asyncHandler(async (req: any, res, next) => {
 
     return res.status(200).json({ status: 'success', message: 'Post disliked successfully' });
   } else {
-    await Post.findByIdAndUpdate(postId, { $addToSet: { LIKES: userId } }, { new: true });
+    await Post.findByIdAndUpdate(postId, { $addToSet: { likes: userId } }, { new: true });
 
     return res.status(200).json({ status: 'success', message: 'Post liked successfully' });
   }
