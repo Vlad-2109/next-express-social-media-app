@@ -170,4 +170,31 @@ const likeOrDislikePost = asyncHandler(async (req: any, res, next) => {
 
 })
 
-export { createPost, getAllPosts, getUserPosts, saveOrUnsavePost, deletePost, likeOrDislikePost };
+const addComment = asyncHandler(async (req: any, res, next) => {
+  const { postId } = req.params;
+  const userId = req.user.id;
+  const { text } = req.body;
+
+  const post = await Post.findById(postId);
+  if (!post) {
+    return next(new AppError('Post not found', 404));
+  }
+
+  if (!text) {
+    return next(new AppError('Comment text is required', 400));
+  }
+
+  const comment = await Comment.create({
+    text,
+    user: userId
+  });
+
+  post.comments.push(comment.id);
+  await post.save({ validateBeforeSave: false });
+
+  await comment.populate({ path: 'user', select: 'username profilePicture bio' });
+
+  res.status(201).json({ status: 'success', message: 'Comment added successfully', data: { comment } });
+})
+
+export { createPost, getAllPosts, getUserPosts, saveOrUnsavePost, deletePost, likeOrDislikePost, addComment };
