@@ -2,12 +2,15 @@
 import { ChangeEvent, FormEvent, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { toast } from 'sonner';
 import PasswordInput from './PasswordInput';
 import LoadingButton from '../Helper/LoadingButton';
 import { BASE_API_URL } from '../../../server';
 import { handleAuthRequest } from '../utils/apiRequest';
+import { useAppDispatch } from '@/store/hook';
+import { setAuthUser } from '@/store/authSlice';
 
 interface FormData {
 	username: string;
@@ -17,6 +20,9 @@ interface FormData {
 }
 
 const Signup = () => {
+	const dispatch = useAppDispatch();
+	const router = useRouter();
+
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [formData, setFormData] = useState<FormData>({
 		username: '',
@@ -39,12 +45,9 @@ const Signup = () => {
 
 		const result = await handleAuthRequest(signupReq, setIsLoading);
 		if (result) {
-			console.log(result.data.data.user);
+			dispatch(setAuthUser(result.data.data.user));
 			toast.success(result.data.message);
-
-			// TODOS:
-			// 1. Redirect to Homepage
-			// 2. Add our user to redux store
+			router.push('/');
 		}
 	};
 
