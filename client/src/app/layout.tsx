@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
+import { Toaster } from '@/components/ui/sonner';
 import "./globals.css";
 
 const font = Roboto({
@@ -21,9 +22,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body
         className={`${font.className} antialiased`}
       >
-        navbar
         {children}
-        footer
+        <Toaster />
       </body>
     </html>
   );
