@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
+import type { Metadata } from 'next';
+import { Roboto } from 'next/font/google';
 import { Toaster } from '@/components/ui/sonner';
-import "./globals.css";
+import ClientProvider from '@/HOC/ClientProvider';
+import './globals.css';
 
 const font = Roboto({
-  weight: ['100', '300', '400', '500', '700', '900'],
-  subsets: ['latin'],
-})
+	weight: ['100', '300', '400', '500', '700', '900'],
+	subsets: ['latin'],
+});
 
 export const metadata: Metadata = {
 	title: 'Social Media App',
@@ -16,15 +17,17 @@ export const metadata: Metadata = {
 	},
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${font.className} antialiased`}
-      >
-        {children}
-        <Toaster />
-      </body>
-    </html>
-  );
+export default function RootLayout({
+	children,
+}: Readonly<{ children: React.ReactNode }>) {
+	return (
+		<html lang="en">
+			<body className={`${font.className} antialiased`}>
+				<ClientProvider>
+					{children}
+					<Toaster />
+				</ClientProvider>
+			</body>
+		</html>
+	);
 }
