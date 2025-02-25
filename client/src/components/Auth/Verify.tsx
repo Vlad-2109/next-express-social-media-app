@@ -1,21 +1,33 @@
 'use client';
-import { ChangeEvent, useRef, useState, KeyboardEvent } from 'react';
-import { MailCheck } from 'lucide-react';
+import { ChangeEvent, useRef, useState, KeyboardEvent, useEffect } from 'react';
+import { Loader, MailCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { toast } from 'sonner';
 import LoadingButton from '../Helper/LoadingButton';
 import { BASE_API_URL } from '../../../server';
 import { handleAuthRequest } from '../utils/apiRequest';
-import { useAppDispatch } from '@/store/hook';
+import { useAppDispatch, useAppSelector } from '@/store/hook';
 import { setAuthUser } from '@/store/authSlice';
 
 const Verify = () => {
-	const dispatch = useAppDispatch();
 	const router = useRouter();
+	const dispatch = useAppDispatch();
+	const user = useAppSelector(state => state.auth.user);
 
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [otp, setOtp] = useState<string[]>(['', '', '', '', '', '']);
+	const [isPageLoading, setIsPageLoading] = useState<boolean>(true);
+
+	useEffect(() => {
+		if (!user) {
+			router.replace('/auth/login');
+		} else if (user && user.isVerified) {
+			router.replace('/');
+		} else {
+			setIsPageLoading(false);
+		}
+	}, [user, router]);
 
 	const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -66,6 +78,14 @@ const Verify = () => {
 		}
 	};
 
+	if (isPageLoading) {
+		return (
+			<div className='h-screen flex justify-center items-center'>
+				<Loader className='w-20 h-20 animate-spin'/>
+			</div>
+		)
+	}
+
 	const handleResendOtp = async () => {
 		const resendOtpReq = async () =>
 			await axios.post(`${BASE_API_URL}/users/resend-otp`, null, {
@@ -84,7 +104,7 @@ const Verify = () => {
 			<MailCheck className="w-20 h-20 sm:w-32 sm:h-32 text-red-600 mb-12" />
 			<h1 className="text-2xl sm:text-3xl font-bold mb-3">OTP Verification</h1>
 			<p className="mb-6 text-sm sm:text-base text-gray-600 font-medium">
-				We have sent a code to code@gmail.com
+				We have sent a code to {user?.email}
 			</p>
 			<div className="flex space-x-4">
 				{[1, 2, 3, 4, 5, 6].map((_, index) => (
