@@ -9,7 +9,7 @@ import LoadingButton from '../Helper/LoadingButton';
 import { Button } from '../ui/button';
 import { useAppDispatch } from '@/store/hook';
 import { BASE_API_URL } from '../../../server';
-import { handleAuthRequest } from '../utils/apiRequest';
+import { handleRequest } from '../utils/apiRequest';
 import { setAuthUser } from '@/store/authSlice';
 
 const PasswordReset = () => {
@@ -35,7 +35,7 @@ const PasswordReset = () => {
 				withCredentials: true,
 			});
 
-		const result = await handleAuthRequest(resetPassReq, setIsLoading);
+		const result = await handleRequest(resetPassReq, setIsLoading);
 
 		if (result) {
 			dispatch(setAuthUser(result.data.data.user));

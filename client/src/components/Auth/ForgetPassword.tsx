@@ -6,7 +6,7 @@ import { KeySquareIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import LoadingButton from '../Helper/LoadingButton';
 import { BASE_API_URL } from '../../../server';
-import { handleAuthRequest } from '../utils/apiRequest';
+import { handleRequest } from '../utils/apiRequest';
 
 const ForgetPassword = () => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -22,7 +22,7 @@ const ForgetPassword = () => {
 				{ withCredentials: true }
 			);
 
-		const result = await handleAuthRequest(forgetPassReq, setIsLoading);
+		const result = await handleRequest(forgetPassReq, setIsLoading);
 
 		if (result) {
 			router.push(`/auth/reset-password?email=${encodeURIComponent(email)}`);

@@ -6,7 +6,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import LoadingButton from '../Helper/LoadingButton';
 import { BASE_API_URL } from '../../../server';
-import { handleAuthRequest } from '../utils/apiRequest';
+import { handleRequest } from '../utils/apiRequest';
 import { useAppDispatch, useAppSelector } from '@/store/hook';
 import { setAuthUser } from '@/store/authSlice';
 
@@ -69,7 +69,7 @@ const Verify = () => {
 				{ withCredentials: true }
 			);
 
-		const result = await handleAuthRequest(verifyReq, setIsLoading);
+		const result = await handleRequest(verifyReq, setIsLoading);
 
 		if (result) {
 			dispatch(setAuthUser(result.data.data.user));
@@ -92,7 +92,7 @@ const Verify = () => {
 				withCredentials: true,
 			});
 
-		const result = await handleAuthRequest(resendOtpReq, setIsLoading);
+		const result = await handleRequest(resendOtpReq, setIsLoading);
 
 		if (result) {
 			toast.success(result.data.message);

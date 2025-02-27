@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import PasswordInput from './PasswordInput';
 import LoadingButton from '../Helper/LoadingButton';
 import { BASE_API_URL } from '../../../server';
-import { handleAuthRequest } from '../utils/apiRequest';
+import { handleRequest } from '../utils/apiRequest';
 import { useAppDispatch } from '@/store/hook';
 import { setAuthUser } from '@/store/authSlice';
 
@@ -43,7 +43,7 @@ const Signup = () => {
 				withCredentials: true,
 			});
 
-		const result = await handleAuthRequest(signupReq, setIsLoading);
+		const result = await handleRequest(signupReq, setIsLoading);
 		if (result) {
 			dispatch(setAuthUser(result.data.data.user));
 			toast.success(result.data.message);
