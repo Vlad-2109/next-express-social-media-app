@@ -1,13 +1,12 @@
 'use client';
-
-import { useAppSelector } from '@/store/hook';
 import { useEffect, useState } from 'react';
-import { User } from '../../../types';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import { Loader } from 'lucide-react';
+import { useAppSelector } from '@/store/hook';
+import { User } from '../../../types';
 import { BASE_API_URL } from '../../../server';
 import { handleRequest } from '../utils/apiRequest';
-import { Loader } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 const RightSidebar = () => {
@@ -66,7 +65,13 @@ const RightSidebar = () => {
 				<h1 className="font-medium cursor-pointer">See all</h1>
 			</div>
 			{suggestedUser?.slice(0, 5).map((s_user) => (
-				<div key={s_user._id} className="mt-6 cursor-pointer">
+				<div
+					onClick={() => {
+						router.push(`/profile/${s_user._id}`);
+					}}
+					key={s_user._id}
+					className="mt-6 cursor-pointer"
+				>
 					<div className="flex items-center justify-between">
 						<div className="flex items-center space-x-4 cursor-pointer">
 							<Avatar className="w-9 h-9">
