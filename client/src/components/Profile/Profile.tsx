@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
-import { Loader, MenuIcon } from 'lucide-react';
+import { Bookmark, Grid, Loader, MenuIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { useAppSelector } from '@/store/hook';
 import {
 	Sheet,
@@ -109,13 +110,45 @@ const Profile = ({ id }: Props) => {
 									<span> Posts</span>
 								</div>
 								<div>
-									<span className="font-bold">{userProfile?.followers.length}</span>
+									<span className="font-bold">
+										{userProfile?.followers.length}
+									</span>
 									<span> Followers</span>
-                                </div>
-                                <div>
-									<span className="font-bold">{userProfile?.following.length}</span>
+								</div>
+								<div>
+									<span className="font-bold">
+										{userProfile?.following.length}
+									</span>
 									<span> Following</span>
 								</div>
+							</div>
+							<p className="w-[80%] font-medium">
+								{userProfile?.bio || 'My Profile Bio Here'}
+							</p>
+						</div>
+					</div>
+					{/* Bottom Post and save */}
+					<div className="mt-10">
+						<div className="flex items-center justify-center space-x-14">
+							<div
+								className={cn(
+									'flex items-center space-x-2 cursor-pointer',
+									postOrSave === 'POST' && 'text-blue-500'
+								)}
+								onClick={() => setPostOrSave('POST')}
+							>
+								<Grid />
+								<span className="font-semibold">Post</span>
+							</div>
+							<div
+								className={cn(
+									'flex items-center space-x-2 cursor-pointer',
+									postOrSave === 'SAVE' && 'text-blue-500'
+								)}
+								onClick={() => setPostOrSave('SAVE')}
+							>
+								<Bookmark />
+								<span className="font-semibold">Save</span>
 							</div>
 						</div>
 					</div>
