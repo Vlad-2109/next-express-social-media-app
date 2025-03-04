@@ -19,6 +19,8 @@ import { BASE_API_URL } from '../../../server';
 import { handleRequest } from '../utils/apiRequest';
 import LeftSidebar from '../Home/LeftSidebar';
 import { Button } from '../ui/button';
+import Post from './Post';
+import Save from './Save';
 
 type Props = { id: string };
 
@@ -151,6 +153,8 @@ const Profile = ({ id }: Props) => {
 								<span className="font-semibold">Save</span>
 							</div>
 						</div>
+						{postOrSave === 'POST' && <Post userProfile={userProfile} />}
+						{postOrSave === 'SAVE' && <Save userProfile={userProfile} />}
 					</div>
 				</div>
 			</div>
