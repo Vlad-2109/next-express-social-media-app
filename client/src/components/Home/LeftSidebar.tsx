@@ -15,12 +15,16 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useAppDispatch, useAppSelector } from '@/store/hook';
 import { setAuthUser } from '@/store/authSlice';
 import { BASE_API_URL } from '../../../server';
+import CreatePostModel from './CreatePostModel';
+import { useState } from 'react';
 
 const LeftSidebar = () => {
 	const user = useAppSelector((state) => state.auth.user);
 	const dispatch = useAppDispatch();
 
 	const router = useRouter();
+
+	const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
 	const handleLogout = async () => {
 		await axios.post(
@@ -37,6 +41,7 @@ const LeftSidebar = () => {
 		if (label === 'Home') router.push('/');
 		if (label === 'Logout') handleLogout();
 		if (label === 'Profile') router.push(`/profile/${user?._id}`);
+		if (label === 'Create') setIsDialogOpen(true);
 	};
 
 	const SidebarLinks = [
@@ -59,6 +64,10 @@ const LeftSidebar = () => {
 
 	return (
 		<div className="h-full">
+			<CreatePostModel
+				isOpen={isDialogOpen}
+				onClose={() => setIsDialogOpen(false)}
+			/>
 			<div className="lg:p-6 p-3 cursor-pointer">
 				<div onClick={() => router.push('/')}>
 					<Image
