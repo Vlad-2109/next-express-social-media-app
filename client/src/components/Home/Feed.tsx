@@ -2,9 +2,10 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import axios from 'axios';
+import { toast } from 'sonner';
 import { BookmarkIcon, HeartIcon, Loader, MessageCircle, SendIcon } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/store/hook';
-import { setPost } from '@/store/postSlice';
+import { likeOrDislike, setPost } from '@/store/postSlice';
 import { BASE_API_URL } from '../../../server';
 import { handleRequest } from '../utils/apiRequest';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
@@ -34,7 +35,15 @@ const Feed = () => {
         getAllPosts();
     }, [dispatch]);
 
-    const handleLikeDislike = async (id: string) => {};
+	const handleLikeDislike = async (id: string) => {
+		const result = await axios.post(`${BASE_API_URL}/posts/like-dislike/${id}`, {}, { withCredentials: true });
+		if (result.data.status === 'success') {
+			if (user?._id) {
+				dispatch(likeOrDislike({ postId: id, userId: user?._id }));
+				toast(result.data.message);
+			}
+		}
+	};
     const handleSaveUnsave = async (id: string) => {};
     const handleComment = async (id: string) => {};
 
@@ -82,7 +91,9 @@ const Feed = () => {
                     </div>
                     <div className="mt-3 flex items-center justify-between">
                         <div className="flex items-center space-x-4">
-                            <HeartIcon className="cursor-pointer" />
+							<HeartIcon
+								onClick={() => handleLikeDislike(post._id)}
+								className={`cursor-pointer ${user?._id && post.likes.includes(user._id) ? 'text-red-500' : ''}`}/>
                             <MessageCircle className="cursor-pointer" />
                             <SendIcon className="cursor-pointer" />
                         </div>
