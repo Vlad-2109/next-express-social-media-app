@@ -98,16 +98,18 @@ const saveOrUnsavePost = asyncHandler(async (req: any, res, next) => {
   const isPostSaved = user.savedPosts.includes(postId);
 
   if (isPostSaved) {
-    const user = await User.updateOne(
+    const user = await User.findByIdAndUpdate(
       { _id: userId },
       { $pull: { savedPosts: postId } },
+      { new: true },
     );
 
     return res.status(200).json({ status: 'success', message: 'Post unsaved successfully', data: { user } });
   } else {
-    const user = await User.updateOne(
+    const user = await User.findByIdAndUpdate(
       { _id: userId },
       { $addToSet: { savedPosts: postId } },
+      { new: true },
     );
 
     return res.status(200).json({ status: 'success', message: 'Post saved successfullly', data: { user } });

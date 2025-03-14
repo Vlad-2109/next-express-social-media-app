@@ -13,7 +13,7 @@ type Props = {
 
 const DotButton = ({ post, user }: Props) => {
   const isOwnPost = post?.user?._id === user?._id;
-  const isFollowing = post?.user?._id ? user?.following.includes(post.user._id) : false;
+  const isFollowing = post?.user?._id && Array.isArray(user?.following) ? user?.following.includes(post?.user?._id) : false;
 
   const dispatch = useAppDispatch();
 

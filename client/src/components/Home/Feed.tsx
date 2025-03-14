@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { BookmarkIcon, HeartIcon, Loader, MessageCircle, SendIcon } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/store/hook';
 import { likeOrDislike, setPost } from '@/store/postSlice';
+import { setAuthUser } from '@/store/authSlice';
 import { BASE_API_URL } from '../../../server';
 import { handleRequest } from '../utils/apiRequest';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
@@ -44,7 +45,15 @@ const Feed = () => {
 			}
 		}
 	};
-    const handleSaveUnsave = async (id: string) => {};
+
+	const handleSaveUnsave = async (id: string) => {
+		const result = await axios.post(`${BASE_API_URL}/posts/save-unsave-post/${id}`, {}, { withCredentials: true });
+		if (result.data.status === 'success') {
+			dispatch(setAuthUser(result.data.data.user));
+			toast.success(result.data.message);
+		}
+	};
+
     const handleComment = async (id: string) => {};
 
     // handle Loading state
@@ -97,7 +106,10 @@ const Feed = () => {
                             <MessageCircle className="cursor-pointer" />
                             <SendIcon className="cursor-pointer" />
                         </div>
-                        <BookmarkIcon className="cursor-pointer" />
+						<BookmarkIcon
+							onClick={() => handleSaveUnsave(post._id)}
+							className={`cursor-pointer ${(user?.savedPosts as string[])?.some((savePostId: string) => savePostId === post._id) ? 'text-red-500' : ''}`}
+						/>
                     </div>
                     <h1 className="mt-2 text-sm font-semibold">{post.likes.length} likes</h1>
                     <p className="mt-2 font-medium">{post.caption}</p>
