@@ -32,7 +32,7 @@ const Comment = ({ user, post }: Props) => {
                 { withCredentials: true }
             );
 
-        const result: any = await handleRequest(addCommentReq);
+        const result = await handleRequest(addCommentReq);
 
         if (result?.data.status === 'success') {
             dispatch(addComment({ postId: id, comment: result?.data.data.comment }));

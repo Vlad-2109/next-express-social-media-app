@@ -21,10 +21,12 @@ import LeftSidebar from '../Home/LeftSidebar';
 import { Button } from '../ui/button';
 import Post from './Post';
 import Save from './Save';
+import { useFollowUnfollow } from '../hooks/use-auth';
 
 type Props = { id: string };
 
 const Profile = ({ id }: Props) => {
+	const { handleFollowUnfollow } = useFollowUnfollow();
 	const router = useRouter();
 	const user = useAppSelector((state) => state.auth.user);
 
@@ -101,7 +103,9 @@ const Profile = ({ id }: Props) => {
 									</Link>
 								)}
 								{!isOwnProfile && (
-									<Button variant={isFollowing ? 'destructive' : 'secondary'}>
+									<Button
+										onClick={() => handleFollowUnfollow(id)}
+										variant={isFollowing ? 'destructive' : 'secondary'}>
 										{isFollowing ? 'Unfollow' : 'Follow'}
 									</Button>
 								)}
