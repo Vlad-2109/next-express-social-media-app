@@ -1,11 +1,17 @@
 'use client';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { toast } from 'sonner';
 import { useAppDispatch } from '@/store/hook';
 import { Post, User } from '../../../types';
 import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Ellipsis } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useFollowUnfollow } from '../hooks/use-auth';
+import axios from 'axios';
+import { BASE_API_URL } from '../../../server';
+import { handleRequest } from '../utils/apiRequest';
+import { deletePost } from '@/store/postSlice';
 
 type Props = {
   post: Post | null;
@@ -19,7 +25,21 @@ const DotButton = ({ post, user }: Props) => {
 
   const dispatch = useAppDispatch();
 
-  const handleDeletePost = async () => await {};
+  const handleDeletePost = async () => {
+    const deletePostReq = async () =>
+      await axios.post(`${BASE_API_URL}/posts/delete-post/${post?._id}`, {},
+        { withCredentials: true });
+    
+    const result = await handleRequest(deletePostReq);
+
+    if (result?.data.status === 'success') {
+      if (post?._id) {
+        dispatch(deletePost(post._id));
+        toast.success(result.data.message);
+        redirect('/');
+      }
+    }
+  }
 
   return (
     <div>
