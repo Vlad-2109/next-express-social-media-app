@@ -1,6 +1,6 @@
 import Image from 'next/image';
-import { User } from '../../../types';
 import { Heart, MessageCircle } from 'lucide-react';
+import { User } from '../../../types';
 
 type Props = {
     userProfile: User | undefined;
