@@ -60,7 +60,7 @@ A modern social media platform built with Next.js 15, TypeScript, and Express. T
 
 1. Clone the repository
 ```bash
-git clone <your-repo-url>
+git clone <repository-url>
 cd next-express-social-media-app
 ```
 
