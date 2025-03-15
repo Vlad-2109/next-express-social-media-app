@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Social Media Application
+
+A modern social media platform built with Next.js 15, TypeScript, and Express. This full-stack application features real-time interactions, responsive design, and a rich set of social features.
+
+## Features
+
+- **Authentication**
+  - Secure user registration and login with JWT
+  - Protected routes and API endpoints
+  - Persistent sessions with HTTP-only cookies
+
+- **Social Interactions**
+  - Create and delete posts with image uploads
+  - Real-time commenting system
+  - Like/unlike posts with immediate UI feedback
+  - Follow/unfollow users with state management
+  - Save posts to personal collection
+  - View saved posts in profile
+
+- **Profile Management**
+  - Customizable user profiles with profile pictures
+  - View followers and following counts
+  - Personal post feed
+  - Saved posts collection
+  - Profile picture upload with Cloudinary integration
+
+- **Modern UI/UX**
+  - Clean and responsive design with Tailwind CSS
+  - Toast notifications for user actions
+  - Loading states and error handling
+  - Dynamic route protection
+  - Shadcn UI components for consistent design
+
+## Tech Stack
+
+### Frontend
+- Next.js 15 (App Router)
+- TypeScript
+- Redux Toolkit for state management
+- Tailwind CSS with Shadcn UI
+- Axios for API requests
+- Sonner for toast notifications
+
+### Backend
+- Express.js with TypeScript
+- MongoDB with Mongoose
+- JWT for authentication
+- Multer for file uploads
+- Cloudinary for image storage
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18.17 or later
+- MongoDB installed and running
+- npm or yarn package manager
+- Cloudinary account for image uploads
 
+### Installation
+
+1. Clone the repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <your-repo-url>
+cd next-express-social-media-app
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies
+```bash
+# Install frontend dependencies
+cd client
+npm install
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# Install backend dependencies
+cd ../server
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Set up environment variables
 
-## Learn More
+Create `.env` files in both client and server directories with variables from file `.env.example`
 
-To learn more about Next.js, take a look at the following resources:
+4. Start the development servers
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# Start the backend server
+cd server
+npm run start:dev
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# In a new terminal, start the frontend
+cd client
+npm run dev
+```
 
-## Deploy on Vercel
+5. Or use deployed frontend and backend
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Server is deployed by Render.com.
+Deployed domain: 
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Client is deployed by Vercel.com
+Deployed domain: 
