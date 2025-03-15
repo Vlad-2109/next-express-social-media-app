@@ -94,7 +94,8 @@ npm run dev
 5. Or use deployed frontend and backend
 
 Server is deployed by Render.com.
-Deployed domain: 
+Deployed domain: https://next-express-social-media-app.onrender.com
 
 Client is deployed by Vercel.com
-Deployed domain: 
+Deployed domain: https://next-express-social-media-app.vercel.app
+
