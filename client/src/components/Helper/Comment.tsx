@@ -1,12 +1,17 @@
 'use client';
 import { useState } from 'react';
 import Image from 'next/image';
+import axios from 'axios';
+import { toast } from 'sonner';
 import { Post, User } from '../../../types';
 import { useAppDispatch } from '@/store/hook';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from '../ui/dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
 import DotButton from './DotButton';
+import { BASE_API_URL } from '../../../server';
+import { handleRequest } from '../utils/apiRequest';
+import { addComment } from '@/store/postSlice';
 
 type Props = {
     user: User | null;
@@ -18,7 +23,23 @@ const Comment = ({ user, post }: Props) => {
 
     const [comment, setComment] = useState<string>('');
 
-    const addCommentHandler = async (id: string) => {};
+    const addCommentHandler = async (id: string) => {
+        if (!comment) return;
+        const addCommentReq = async () =>
+            await axios.post(
+                `${BASE_API_URL}/posts/comment/${id}`,
+                { text: comment },
+                { withCredentials: true }
+            );
+
+        const result: any = await handleRequest(addCommentReq);
+
+        if (result?.data.status === 'success') {
+            dispatch(addComment({ postId: id, comment: result?.data.data.comment }));
+            toast.success('Comment Posted');
+            setComment('');
+        }
+    };
     return (
         <div>
             <Dialog>
@@ -78,7 +99,14 @@ const Comment = ({ user, post }: Props) => {
                                         onChange={e => setComment(e.target.value)}
                                         className="w-full outline-none border text-sm border-gray-300 p-2 rounded"
                                     />
-                                    <Button variant="outline">Send</Button>
+                                    <Button
+                                        onClick={() => {
+                                            if (post?._id) addCommentHandler(post._id);
+                                        }}
+                                        variant="outline"
+                                    >
+                                        Send
+                                    </Button>
                                 </div>
                             </div>
                         </div>

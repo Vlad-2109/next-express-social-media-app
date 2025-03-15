@@ -5,7 +5,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { BookmarkIcon, HeartIcon, Loader, MessageCircle, SendIcon } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/store/hook';
-import { likeOrDislike, setPost } from '@/store/postSlice';
+import { addComment, likeOrDislike, setPost } from '@/store/postSlice';
 import { setAuthUser } from '@/store/authSlice';
 import { BASE_API_URL } from '../../../server';
 import { handleRequest } from '../utils/apiRequest';
@@ -36,25 +36,49 @@ const Feed = () => {
         getAllPosts();
     }, [dispatch]);
 
-	const handleLikeDislike = async (id: string) => {
-		const result = await axios.post(`${BASE_API_URL}/posts/like-dislike/${id}`, {}, { withCredentials: true });
-		if (result.data.status === 'success') {
-			if (user?._id) {
-				dispatch(likeOrDislike({ postId: id, userId: user?._id }));
-				toast(result.data.message);
-			}
-		}
-	};
+    const handleLikeDislike = async (id: string) => {
+        const result = await axios.post(
+            `${BASE_API_URL}/posts/like-dislike/${id}`,
+            {},
+            { withCredentials: true }
+        );
+        if (result.data.status === 'success') {
+            if (user?._id) {
+                dispatch(likeOrDislike({ postId: id, userId: user?._id }));
+                toast(result.data.message);
+            }
+        }
+    };
 
-	const handleSaveUnsave = async (id: string) => {
-		const result = await axios.post(`${BASE_API_URL}/posts/save-unsave-post/${id}`, {}, { withCredentials: true });
-		if (result.data.status === 'success') {
-			dispatch(setAuthUser(result.data.data.user));
-			toast.success(result.data.message);
-		}
-	};
+    const handleSaveUnsave = async (id: string) => {
+        const result = await axios.post(
+            `${BASE_API_URL}/posts/save-unsave-post/${id}`,
+            {},
+            { withCredentials: true }
+        );
+        if (result.data.status === 'success') {
+            dispatch(setAuthUser(result.data.data.user));
+            toast.success(result.data.message);
+        }
+    };
 
-    const handleComment = async (id: string) => {};
+    const handleComment = async (id: string) => {
+        if (!comment) return;
+        const addCommentReq = async () =>
+            await axios.post(
+                `${BASE_API_URL}/posts/comment/${id}`,
+                { text: comment },
+                { withCredentials: true }
+            );
+
+        const result: any = await handleRequest(addCommentReq);
+
+        if (result?.data.status === 'success') {
+            dispatch(addComment({ postId: id, comment: result?.data.data.comment }));
+            toast.success('Comment Posted');
+            setComment('');
+        }
+    };
 
     // handle Loading state
     if (isLoading) {
@@ -100,16 +124,25 @@ const Feed = () => {
                     </div>
                     <div className="mt-3 flex items-center justify-between">
                         <div className="flex items-center space-x-4">
-							<HeartIcon
-								onClick={() => handleLikeDislike(post._id)}
-								className={`cursor-pointer ${user?._id && post.likes.includes(user._id) ? 'text-red-500' : ''}`}/>
+                            <HeartIcon
+                                onClick={() => handleLikeDislike(post._id)}
+                                className={`cursor-pointer ${
+                                    user?._id && post.likes.includes(user._id) ? 'text-red-500' : ''
+                                }`}
+                            />
                             <MessageCircle className="cursor-pointer" />
                             <SendIcon className="cursor-pointer" />
                         </div>
-						<BookmarkIcon
-							onClick={() => handleSaveUnsave(post._id)}
-							className={`cursor-pointer ${(user?.savedPosts as string[])?.some((savePostId: string) => savePostId === post._id) ? 'text-red-500' : ''}`}
-						/>
+                        <BookmarkIcon
+                            onClick={() => handleSaveUnsave(post._id)}
+                            className={`cursor-pointer ${
+                                (user?.savedPosts as string[])?.some(
+                                    (savePostId: string) => savePostId === post._id
+                                )
+                                    ? 'text-red-500'
+                                    : ''
+                            }`}
+                        />
                     </div>
                     <h1 className="mt-2 text-sm font-semibold">{post.likes.length} likes</h1>
                     <p className="mt-2 font-medium">{post.caption}</p>
